@@ -10,8 +10,13 @@ import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.JMenu;
 
 import com.bean.lesson;
 import com.bean.student;
@@ -22,7 +27,9 @@ import com.service.studentSerivelmpl;
 import com.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -57,6 +64,8 @@ public class MainFrame extends JFrame {
     private JButton resetButton;
     private JButton editButton;
     private JButton deleteButton;
+    private JComboBox<String> comboBox = new JComboBox<>();
+    private JComboBox<String> semester = new JComboBox<>();
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -84,13 +93,18 @@ public class MainFrame extends JFrame {
         setVisible(true);
 
         lessonMJMenu = new JMenu("课程管理");
+        Font t = new Font("宋体", Font.PLAIN, 15);
+        lessonMJMenu.setFont(t);
+        JMenu stumenu = new JMenu("学生申请");
+        stumenu.setFont(t);
         MenuBar.add(lessonMJMenu);
-        getContentPane().add(MenuBar);
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
+        MenuBar.add(stumenu);
+        this.setJMenuBar(MenuBar);
+
         StuInfo();
 
         staffListTable.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent me){
+            public void mouseClicked(MouseEvent me) {
                 select(me);
             }
         });
@@ -102,16 +116,26 @@ public class MainFrame extends JFrame {
         searchButton = new JButton("搜索");
         searchButton.setBounds(450, 10, 95, 30);
         getContentPane().add(searchButton);
-            searchButton.addActionListener(new ActionListener() {
+        searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 searchStudent(ae);
             }
         });
 
         setLabel();
+        setyear();
+        setsemester();
+        comboBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                selectsemesteAndyear(ie);
+            }
+        });
 
-        
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
+        semester.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                selectsemesteAndyear(ie);
+            }
+        });
     }
 
     public void StuInfo() {
@@ -127,7 +151,7 @@ public class MainFrame extends JFrame {
         DefaultTableModel model = new DefaultTableModel(header, 0);
         staffListTable = new JTable(model);
         jscrollpane = new JScrollPane(staffListTable);
-        jscrollpane.setBounds(10, 50, 800, 600);
+        jscrollpane.setBounds(10, 100, 800, 600);
         getContentPane().add(jscrollpane);
         setstuinfo(new student());
     }
@@ -258,7 +282,6 @@ public class MainFrame extends JFrame {
     }
 
     public void resetValue(ActionEvent ae) {
-        // TODO 自动生成的方法存根
         idTextField.setText("");
         nameTextField.setText("");
         for (JTextField cur : co) {
@@ -373,6 +396,76 @@ public class MainFrame extends JFrame {
             return;
         } else {
             JOptionPane.showMessageDialog(this, "修改失败!");
+        }
+    }
+
+    public void setyear() {
+        HashMap<String, Integer> map = new HashMap<>();
+        comboBox.addItem("全部");
+        List<lesson> lessons = serive.getLessons();
+        for (lesson cur : lessons) {
+            map.put(cur.getyear(), 0);
+        }
+        for (lesson cur : lessons) {
+            if (map.get(cur.getyear()) == 0) {
+                comboBox.addItem(cur.getyear());
+                map.replace(cur.getyear(), 1);
+            }
+        }
+        comboBox.setBounds(150, 50, 100, 30);
+        getContentPane().add(comboBox);
+    }
+
+    public void setsemester() {
+
+        semester.addItem("1");
+        semester.addItem("2");
+        semester.setBounds(550, 50, 100, 30);
+        getContentPane().add(semester);
+    }
+
+    public void selectsemesteAndyear(ItemEvent me) {
+        int b = Integer.parseInt(semester.getSelectedItem().toString());
+        List<lesson> lessons = serive.getLessons();
+        String[] header = new String[lessons.size() + 2];
+        header[0] = "id";
+        header[1] = "姓名";
+        int i = 2;
+        DefaultComboBoxModel model = (DefaultComboBoxModel) comboBox.getModel();
+        if (me.getStateChange() == ItemEvent.SELECTED) {
+            String a = model.getSelectedItem().toString();
+            if (a == "全部") {
+                getContentPane().remove(staffListTable);
+                getContentPane().remove(jscrollpane);
+                StuInfo();
+                return;
+            }
+            for (lesson cur : lessons) {
+                if (cur.getyear().equals(a) && cur.getsemester() == b) {
+                    header[i] = cur.getname();
+                    i++;
+                }
+            }
+            getContentPane().remove(staffListTable);
+            getContentPane().remove(jscrollpane);
+            DefaultTableModel Tmodel = new DefaultTableModel(header, 0);
+            staffListTable = new JTable(Tmodel);
+            jscrollpane = new JScrollPane(staffListTable);
+            jscrollpane.setBounds(10, 100, 800, 600);
+            getContentPane().add(jscrollpane);
+            Tmodel.setRowCount(0);
+            List<student> students = studentSerive.getStudents();
+            for (student curstu : students) {
+                Vector v = new Vector<>();
+                v.add(curstu.getid());
+                v.add(curstu.getname());
+                for (lesson curLesson : curstu.getLessons()) {
+                    if (curLesson.getyear().equals(a) && curLesson.getsemester() == b) {
+                        v.add(curLesson.getscore());
+                    }
+                }
+                Tmodel.addRow(v);
+            }
         }
     }
 }

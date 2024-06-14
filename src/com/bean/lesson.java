@@ -1,6 +1,9 @@
 package com.bean;
 
 public class lesson {
+
+    private String year;
+    private int semester = 0;
     private int id;
     private String name;
     private int credit;
@@ -13,6 +16,14 @@ public class lesson {
         this.id = id;
         this.name = name;
         this.credit = credit;
+    }
+
+    public lesson(int id, String name, int credit, int semester, String year) {
+        this.id = id;
+        this.name = name;
+        this.credit = credit;
+        this.semester = semester;
+        this.year = year;
     }
 
     public int getid() {
@@ -31,6 +42,14 @@ public class lesson {
         return this.score;
     }
 
+    public String getyear() {
+        return this.year;
+    }
+
+    public int getsemester() {
+        return this.semester;
+    }
+
     public void setid(int id) {
         this.id = id;
     }
@@ -45,6 +64,14 @@ public class lesson {
 
     public void setscore(int score) {
         this.score = score;
+    }
+
+    public void setyear(String year) {
+        this.year = year;
+    }
+
+    public void setsemester(int semester) {
+        this.semester = semester;
     }
 
     @Override
