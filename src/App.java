@@ -31,16 +31,16 @@ public class App {
         // dao.addlesson(c);
         // dao.updatelesson(c);
         studentSerive serive = new studentSerivelmpl();
-        // List<student> a = serive.getStudents();
-        // for (student b : a) {
-        //     System.out.println(b.getid());
-        //     System.out.println(b.getname());
-        //     for (lesson cur : b.getLessons()) {
-        //         System.out.println(cur.getname());
-        //         System.out.println(cur.getcredit());
-        //         System.out.println(cur.getscore());
-        //     }
-        // }
+        List<student> a = serive.getStudents();
+        for (student b : a) {
+            System.out.println(b.getid());
+            System.out.println(b.getname());
+            for (lesson cur : b.getLessons()) {
+                System.out.println(cur.getname());
+                System.out.println(cur.getcredit());
+                System.out.println(cur.getscore());
+            }
+        }
         List<lesson> lessons = dao.getLessons();
         for (lesson cur : lessons) {
             cur.setscore(99);
