@@ -1,0 +1,71 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "MainFrame",
+            "request": "launch",
+            "mainClass": "com.view.MainFrame",
+            "projectName": "work_6128afde"
+        },
+        {
+            "type": "java",
+            "name": "MainFrame",
+            "request": "launch",
+            "mainClass": "com.view.MainFrame",
+            "projectName": "work_593c50ad"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "App",
+            "projectName": "work_593c50ad"
+        },
+        {
+            "type": "java",
+            "name": "LoginFrm",
+            "request": "launch",
+            "mainClass": "com.view.LoginFrm",
+            "projectName": "work_593c50ad"
+        },
+        {
+            "type": "java",
+            "name": "verify",
+            "request": "launch",
+            "mainClass": "com.util.verify",
+            "projectName": "work_6128afde"
+        },
+        {
+            "type": "java",
+            "name": "LoginFrm",
+            "request": "launch",
+            "mainClass": "com.view.LoginFrm",
+            "projectName": "work_6128afde"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "App",
+            "projectName": "work_6128afde"
+        },
+        {
+            "type": "java",
+            "name": "DbUtil",
+            "request": "launch",
+            "mainClass": "com.util.DbUtil",
+            "projectName": "work_6128afde",
+            "console": "externalTerminal"
+        }
+    ]
+}
