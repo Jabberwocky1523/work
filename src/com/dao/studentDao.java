@@ -94,6 +94,10 @@ public class studentDao extends lessonDao {
 
     public int addstudent(student student) {
         int temp = 0;
+        List<student> cur = findByid(student.getid());
+        if (cur.size() > 0) {
+            return 0;
+        }
         String sql = "insert into student (id,name) values (?,?)";
         try {
             PreparedStatement prst = con.prepareStatement(sql);
@@ -133,6 +137,10 @@ public class studentDao extends lessonDao {
 
     public int updateStudent(student student, student nstudent) {
         int temp = 0;
+        List<student> cur = findByid(nstudent.getid());
+        if (cur.size() > 0) {
+            return 0;
+        }
         String sql = "Update student SET id = ? ,name = ? where id = ?";
         try {
             PreparedStatement prst = con.prepareStatement(sql);
@@ -143,9 +151,9 @@ public class studentDao extends lessonDao {
             if (a != 0) {
                 temp = a;
             }
-            for (lesson lesson : student.getLessons()) {
+            for (lesson lesson : nstudent.getLessons()) {
                 sql = "update student set " + lesson.getname() + " = " + lesson.getscore() + " where id = "
-                        + student.getid();
+                        + nstudent.getid();
                 prst = con.prepareStatement(sql);
                 a = prst.executeUpdate();
             }

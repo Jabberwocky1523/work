@@ -34,6 +34,8 @@ public class MainFrame extends JFrame {
     private int Xindex1 = 860;
     private int Yindex = 100;
     private int Xindex2 = 950;
+    private JMenuBar MenuBar = new JMenuBar();
+    private JMenu lessonMJMenu;
     public lessonSerive serive = new lessonSerivelmpl();
     public studentSerive studentSerive = new studentSerivelmpl();
     private JPanel dialogPane;
@@ -80,6 +82,10 @@ public class MainFrame extends JFrame {
         setResizable(false);// 设置页面不可拖拽改变大小
         getContentPane().setLayout(null);
         setVisible(true);
+
+        lessonMJMenu = new JMenu("课程管理");
+        MenuBar.add(lessonMJMenu);
+        getContentPane().add(MenuBar);
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
         StuInfo();
 
@@ -88,7 +94,6 @@ public class MainFrame extends JFrame {
                 select(me);
             }
         });
-
         searchField = new JTextField();
         searchField.setBounds(250, 10, 180, 30);
         getContentPane().add(searchField);
