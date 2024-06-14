@@ -29,7 +29,7 @@ import java.util.Vector;
  * @author Kurisu
  */
 public class MainFrame extends JFrame {
-    private student student1;
+    private student student1 = new student();
     private JTextField[] co;
     private int Xindex1 = 860;
     private int Yindex = 100;
@@ -247,7 +247,9 @@ public class MainFrame extends JFrame {
                     .setscore(Integer.parseInt(model.getValueAt(staffListTable.getSelectedRow(), index).toString()));
             index++;
         }
-        student1 = new student(id, name, lessons);
+        student1.setid(id);
+        student1.setname(name);
+        student1.setlesson(lessons);
     }
 
     public void resetValue(ActionEvent ae) {
@@ -278,10 +280,10 @@ public class MainFrame extends JFrame {
         int a = studentSerive.deletestudent(cur);
         if (a != 0) {
             JOptionPane.showMessageDialog(this, "删除成功！");
-            StuInfo();
         } else {
             JOptionPane.showMessageDialog(this, "删除失败！");
         }
+        setstuinfo(new student());
         resetValue(ae);
     }
 
@@ -318,7 +320,7 @@ public class MainFrame extends JFrame {
         int a = studentSerive.addstudent(cur);
         if (a != 0) {
             JOptionPane.showMessageDialog(this, "添加成功!");
-            StuInfo();
+            setstuinfo(new student());
         } else {
             JOptionPane.showMessageDialog(this, "添加失败!");
         }
@@ -354,8 +356,7 @@ public class MainFrame extends JFrame {
         if (StringUtil.isEmpty(name)) {
             JOptionPane.showMessageDialog(this, "请填写学生姓名!");
             return;
-        }
-        if (id == 0) {
+        } else if (id == 0) {
             JOptionPane.showMessageDialog(this, "请填写学生学号！");
             return;
         }
@@ -363,8 +364,7 @@ public class MainFrame extends JFrame {
         int a = studentSerive.updateStudent(student1, cur);
         if (a != 0) {
             JOptionPane.showMessageDialog(this, "修改成功!");
-            StuInfo();
-            resetValue(ae);
+            setstuinfo(new student());
             return;
         } else {
             JOptionPane.showMessageDialog(this, "修改失败!");
