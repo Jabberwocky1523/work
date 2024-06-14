@@ -1,7 +1,3 @@
-/*
- * Created by JFormDesigner on Wed Jun 12 21:42:31 HKT 2024
- */
-
 package com.view;
 
 import java.awt.*;
