@@ -138,7 +138,7 @@ public class studentDao extends lessonDao {
     public int updateStudent(student student, student nstudent) {
         int temp = 0;
         List<student> cur = findByid(nstudent.getid());
-        if (cur.size() > 0) {
+        if (cur.size() == 0) {
             return 0;
         }
         String sql = "Update student SET id = ? ,name = ? where id = ?";

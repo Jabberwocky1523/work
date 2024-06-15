@@ -32,8 +32,8 @@ import java.util.Vector;
  * @author Kurisu
  */
 public class MainFrame extends JFrame {
+    private int temp = 0;
     private student student1 = new student();
-    private JTextField[] co;
     private int Xindex1 = 860;
     private int Yindex = 100;
     private int Xindex2 = 950;
@@ -41,6 +41,9 @@ public class MainFrame extends JFrame {
     private JMenu lessonMJMenu;
     public lessonSerive serive = new lessonSerivelmpl();
     public studentSerive studentSerive = new studentSerivelmpl();
+    private List<lesson> curLessons = serive.getLessons();
+    private JTextField[] co = new JTextField[serive.getLessons().size()];
+    private JLabel[] coLabels = new JLabel[serive.getLessons().size()];
     private JPanel dialogPane;
     private JPanel contentPanel;
     private JPanel buttonBar;
@@ -99,11 +102,6 @@ public class MainFrame extends JFrame {
 
         StuInfo();
 
-        staffListTable.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent me) {
-                select(me);
-            }
-        });
         searchField = new JTextField();
         searchField.setBounds(250, 10, 180, 30);
         getContentPane().add(searchField);
@@ -136,6 +134,7 @@ public class MainFrame extends JFrame {
 
     public void StuInfo() {
         List<lesson> lessonList = serive.getLessons();
+        curLessons = lessonList;
         String[] header = new String[lessonList.size() + 2];
         header[0] = "id";
         header[1] = "姓名";
@@ -150,6 +149,11 @@ public class MainFrame extends JFrame {
         jscrollpane.setBounds(10, 100, 800, 600);
         getContentPane().add(jscrollpane);
         setstuinfo(new student());
+        staffListTable.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                select(me);
+            }
+        });
     }
 
     public void setstuinfo(student student) {
@@ -157,11 +161,18 @@ public class MainFrame extends JFrame {
         model.setRowCount(0);
         List<student> students = studentSerive.getStudents();
         for (student curstu : students) {
+            int i = 0;
             Vector v = new Vector<>();
             v.add(curstu.getid());
             v.add(curstu.getname());
             for (lesson curLesson : curstu.getLessons()) {
-                v.add(curLesson.getscore());
+                if (curLesson.getname().equals(curLessons.get(i).getname())) {
+                    v.add(curLesson.getscore());
+                    i++;
+                    if (i == curLessons.size()) {
+                        break;
+                    }
+                }
             }
             model.addRow(v);
         }
@@ -193,8 +204,21 @@ public class MainFrame extends JFrame {
     public void setLabel() {
         int i = 0;
         int index = 100;
-        List<lesson> lessons = serive.getLessons();
-        co = new JTextField[lessons.size()];
+        if (temp != 0) {
+            for (JTextField curco : co) {
+                getContentPane().remove(curco);
+            }
+            for (JLabel curJLabel : coLabels) {
+                getContentPane().remove(curJLabel);
+            }
+            getContentPane().remove(addButton);
+            getContentPane().remove(editButton);
+            getContentPane().remove(deleteButton);
+            getContentPane().remove(resetButton);
+            getContentPane().remove(idTextField);
+            getContentPane().remove(nameTextField);
+        }
+        temp++;
         idLabel = new JLabel("学号：");
         idTextField = new JTextField();
         idLabel.setBounds(860, 50, 100, 30);
@@ -209,7 +233,7 @@ public class MainFrame extends JFrame {
         getContentPane().add(nameLabel);
         getContentPane().add(nameTextField);
 
-        for (lesson cur : lessons) {
+        for (lesson cur : curLessons) {
             stuLabel = new JLabel(cur.getname());
             stuTextField = new JTextField();
             stuLabel.setBounds(Xindex1, 50 + index, 100, 30);
@@ -217,9 +241,11 @@ public class MainFrame extends JFrame {
             getContentPane().add(stuLabel);
             getContentPane().add(stuTextField);
             co[i] = stuTextField;
+            coLabels[i] = stuLabel;
             i++;
             index = index + 50;
         }
+        this.repaint();
 
         addButton = new JButton("新增学生");
         addButton.setBounds(820, 50 + index, 90, 30);
@@ -256,6 +282,7 @@ public class MainFrame extends JFrame {
                 deletestudent(ae);
             }
         });
+
     }
 
     public void select(MouseEvent me) {
@@ -265,7 +292,7 @@ public class MainFrame extends JFrame {
         String name = model.getValueAt(staffListTable.getSelectedRow(), 1).toString();
         idTextField.setText(model.getValueAt(staffListTable.getSelectedRow(), 0).toString());
         nameTextField.setText(model.getValueAt(staffListTable.getSelectedRow(), 1).toString());
-        List<lesson> lessons = serive.getLessons();
+        List<lesson> lessons = curLessons;
         for (int i = 0; i < lessons.size(); i++) {
             co[i].setText(model.getValueAt(staffListTable.getSelectedRow(), index).toString());
             lessons.get(i)
@@ -321,16 +348,22 @@ public class MainFrame extends JFrame {
         }
         String name = nameTextField.getText().toString();
         List<lesson> lessons = serive.getLessons();
-        int i = 0;
-        for (JTextField cur : co) {
-            String temp = cur.getText().toString();
+
+        for (int i = 0; i < curLessons.size(); i++) {
+            String temp = co[i].getText().toString();
             if (temp.matches("^[0-9]*$")) {
-                lessons.get(i).setscore(Integer.parseInt(temp));
+                int j = i;
+                while (true) {
+                    if (lessons.get(j).getname().equals(coLabels[i].getText().toString())) {
+                        lessons.get(j).setscore(Integer.parseInt(temp));
+                        break;
+                    }
+                    j++;
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "课程分数必须为数字!");
                 return;
             }
-            i++;
         }
         if (StringUtil.isEmpty(name)) {
             JOptionPane.showMessageDialog(this, "请填写学生姓名!");
@@ -365,17 +398,23 @@ public class MainFrame extends JFrame {
             return;
         }
         String name = nameTextField.getText().toString();
-        List<lesson> lessons = serive.getLessons();
-        int i = 0;
-        for (JTextField cur : co) {
-            String temp = cur.getText().toString();
+        List<student> cur1 = studentSerive.findByid(id);
+        List<lesson> lessons = cur1.get(0).getLessons();
+        for (int i = 0; i < curLessons.size(); i++) {
+            String temp = co[i].getText().toString();
             if (temp.matches("^[0-9]*$")) {
-                lessons.get(i).setscore(Integer.parseInt(temp));
+                int j = i;
+                while (true) {
+                    if (lessons.get(j).getname().equals(coLabels[i].getText().toString())) {
+                        lessons.get(j).setscore(Integer.parseInt(temp));
+                        break;
+                    }
+                    j++;
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "课程分数必须为数字!");
                 return;
             }
-            i++;
         }
         if (StringUtil.isEmpty(name)) {
             JOptionPane.showMessageDialog(this, "请填写学生姓名!");
@@ -434,11 +473,14 @@ public class MainFrame extends JFrame {
                 getContentPane().remove(staffListTable);
                 getContentPane().remove(jscrollpane);
                 StuInfo();
+                setLabel();
                 return;
             }
+            curLessons.clear();
             for (lesson cur : lessons) {
                 if (cur.getyear().equals(a) && cur.getsemester() == b) {
                     header[i] = cur.getname();
+                    curLessons.add(cur);
                     i++;
                 }
             }
@@ -448,7 +490,13 @@ public class MainFrame extends JFrame {
             staffListTable = new JTable(Tmodel);
             jscrollpane = new JScrollPane(staffListTable);
             jscrollpane.setBounds(10, 100, 800, 600);
+            staffListTable.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent me) {
+                    select(me);
+                }
+            });
             getContentPane().add(jscrollpane);
+            setLabel();
             Tmodel.setRowCount(0);
             List<student> students = studentSerive.getStudents();
             for (student curstu : students) {
