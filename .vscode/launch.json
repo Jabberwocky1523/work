@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "LessonFrame",
+            "request": "launch",
+            "mainClass": "com.view.LessonFrame",
+            "projectName": "work_6128afde"
+        },
+        {
+            "type": "java",
             "name": "MainFrame",
             "request": "launch",
             "mainClass": "com.view.MainFrame",

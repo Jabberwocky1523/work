@@ -48,7 +48,11 @@ public class LessonFrame extends JFrame {
     }
 
     public void initComponents() {
-
+        setTitle("课程管理");
+        setBounds(200, 20, 1200, 700);// 设置页面大小
+        setResizable(false);// 设置页面不可拖拽改变大小
+        getContentPane().setLayout(null);
+        setVisible(true);
     }
 
 }

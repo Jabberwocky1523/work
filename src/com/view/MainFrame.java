@@ -100,6 +100,12 @@ public class MainFrame extends JFrame {
         MenuBar.add(stumenu);
         this.setJMenuBar(MenuBar);
 
+        lessonMJMenu.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                new LessonFrame();
+            }
+        });
+
         StuInfo();
 
         searchField = new JTextField();
