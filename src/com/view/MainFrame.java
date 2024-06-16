@@ -32,16 +32,16 @@ import java.util.Vector;
  * @author Kurisu
  */
 public class MainFrame extends JFrame {
-    private int temp = 0;
-    private student student1 = new student();
-    private int Xindex1 = 860;
-    private int Yindex = 100;
-    private int Xindex2 = 950;
-    private JMenuBar MenuBar = new JMenuBar();
     private JMenu lessonMJMenu;
     public lessonSerive serive = new lessonSerivelmpl();
     public studentSerive studentSerive = new studentSerivelmpl();
     private List<lesson> curLessons = serive.getLessons();
+    private int temp2 = 0;
+    private int temp = 0;
+    private int Xindex1 = 860;
+    private int Xindex2 = 950;
+    private student student1 = new student();
+    private JMenuBar MenuBar = new JMenuBar();
     private JTextField[] co = new JTextField[serive.getLessons().size()];
     private JLabel[] coLabels = new JLabel[serive.getLessons().size()];
     private JPanel dialogPane;
@@ -83,13 +83,23 @@ public class MainFrame extends JFrame {
         initComponents();
     }
 
-    private void initComponents() {
-        setTitle("高校成绩管理系统");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 关闭窗口
-        setBounds(200, 20, 1200, 700);// 设置页面大小
-        setResizable(false);// 设置页面不可拖拽改变大小
-        getContentPane().setLayout(null);
-        setVisible(true);
+    protected void initComponents() {
+        temp = 0;
+        Xindex1 = 860;
+        Xindex2 = 950;
+        student1 = new student();
+        MenuBar = new JMenuBar();
+        JTextField[] co = new JTextField[serive.getLessons().size()];
+        JLabel[] coLabels = new JLabel[serive.getLessons().size()];
+        if (temp2 == 0) {
+            setTitle("高校成绩管理系统");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 关闭窗口
+            setBounds(200, 20, 1200, 700);// 设置页面大小
+            setResizable(false);// 设置页面不可拖拽改变大小
+            getContentPane().setLayout(null);
+            setVisible(true);
+            temp2++;
+        }
 
         lessonMJMenu = new JMenu("课程管理");
         Font t = new Font("宋体", Font.PLAIN, 15);
@@ -100,9 +110,11 @@ public class MainFrame extends JFrame {
         MenuBar.add(stumenu);
         this.setJMenuBar(MenuBar);
 
+        MainFrame curFrame = this;
         lessonMJMenu.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {
-                new LessonFrame();
+                LessonFrame lessonFrame = new LessonFrame(curFrame);
+                lessonFrame.setVisible(true);
             }
         });
 
@@ -354,7 +366,6 @@ public class MainFrame extends JFrame {
         }
         String name = nameTextField.getText().toString();
         List<lesson> lessons = serive.getLessons();
-
         for (int i = 0; i < curLessons.size(); i++) {
             String temp = co[i].getText().toString();
             if (temp.matches("^[0-9]*$")) {

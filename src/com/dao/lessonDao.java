@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bean.lesson;
+import com.bean.student;
 import com.util.DbUtil;
 
 public class lessonDao {
@@ -34,6 +35,58 @@ public class lessonDao {
             e.printStackTrace();
         }
         return ans;
+    }
+
+    public List<lesson> findById(int id) {
+        List<lesson> cur1 = new ArrayList<lesson>();
+        StringBuffer sqlbBuffer = new StringBuffer("select * from lesson");
+        if (!(id == 0)) {
+            sqlbBuffer.append(" where id like '%" + id + "" + "%'");
+        }
+        try {
+            String sql = new String(sqlbBuffer.toString());
+            PreparedStatement prst = con.prepareStatement(sql);
+            ResultSet executeQuery = prst.executeQuery();
+            while (executeQuery.next()) {
+                lesson ans = new lesson();
+                ans.setid(executeQuery.getInt("id"));
+                ans.setname(executeQuery.getString("name"));
+                ans.setcredit(executeQuery.getInt("credit"));
+                ans.setyear(executeQuery.getString("year"));
+                ans.setsemester(executeQuery.getInt("semester"));
+                ans.setscore(0);
+                cur1.add(ans);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cur1;
+    }
+
+    public List<lesson> findByName(String name) {
+        List<lesson> cur1 = new ArrayList<lesson>();
+        StringBuffer sqlbBuffer = new StringBuffer("select * from lesson");
+        if (!(name == null)) {
+            sqlbBuffer.append(" where name like '%" + name + "" + "%'");
+        }
+        try {
+            String sql = new String(sqlbBuffer.toString());
+            PreparedStatement prst = con.prepareStatement(sql);
+            ResultSet executeQuery = prst.executeQuery();
+            while (executeQuery.next()) {
+                lesson ans = new lesson();
+                ans.setid(executeQuery.getInt("id"));
+                ans.setname(executeQuery.getString("name"));
+                ans.setcredit(executeQuery.getInt("credit"));
+                ans.setyear(executeQuery.getString("year"));
+                ans.setsemester(executeQuery.getInt("semester"));
+                ans.setscore(0);
+                cur1.add(ans);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cur1;
     }
 
     public lesson getLessonByid(int id) {

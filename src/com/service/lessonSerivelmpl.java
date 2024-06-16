@@ -14,22 +14,30 @@ public class lessonSerivelmpl implements lessonSerive {
         return serive.getlesson();
     }
 
+    public List<lesson> findById(int id) {
+        return serive.findById(id);
+    }
+
+    public List<lesson> findByName(String name) {
+        return serive.findByName(name);
+    }
+
     public int addlesson(lesson lesson) {
         int temp = serive.addlesson(lesson);
         int a = dao.addColoumn(lesson);
-        return a;
+        return temp;
     }
 
     public int deletelesson(lesson lesson) {
         int temp = serive.deletelesson(lesson);
         int a = dao.deleteColoumn(lesson);
-        return a;
+        return temp;
     }
 
     public int updatelesson(lesson lesson) {
         lesson cur = serive.getLessonByid(lesson.getid());
         int temp = serive.updatelesson(lesson);
         int a = dao.updateColoumn(cur, lesson);
-        return a;
+        return temp;
     }
 }
