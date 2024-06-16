@@ -25,10 +25,9 @@ public class adminSerivelmpl implements adminSerive {
     public int login(admin admin) {
         int temp = 0;
         admin cur = serive.getAdminByname(admin.getname());
-        if (cur.getpwd().equals(admin.getpwd()) && cur.gettemp() != 0) {
-            temp = 1;
-            if (cur.gettemp() == 2) {
-                temp = 2;
+        if (cur.getname() != null) {
+            if (cur.getpwd().equals(admin.getpwd()) || cur.gettemp() == 3) {
+                temp = cur.gettemp();
             }
         }
         return temp;

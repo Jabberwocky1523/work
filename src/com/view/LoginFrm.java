@@ -11,7 +11,10 @@ import javax.swing.JTextField;
 import com.dao.adminDao;
 import com.service.adminSerive;
 import com.service.adminSerivelmpl;
+import com.service.studentSerive;
+import com.service.studentSerivelmpl;
 import com.bean.admin;
+import com.bean.student;
 import com.util.StringUtil;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -24,6 +27,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import com.view.studentFrame;
 
 @SuppressWarnings({ "serial", "unused" })
 public class LoginFrm extends JFrame {
@@ -39,6 +43,7 @@ public class LoginFrm extends JFrame {
     private JButton submitButton;
     private JButton resetButton;
     public adminSerive serive = new adminSerivelmpl();
+    public studentSerive Dao = new studentSerivelmpl();
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -211,14 +216,27 @@ public class LoginFrm extends JFrame {
         adminTmp.setname(aname);
         adminTmp.setpwd(password);
         int i = serive.login(adminTmp);
+        List<student> ans = Dao.findByid(Integer.parseInt(aname));
         if (i == 0) {
-            JOptionPane.showMessageDialog(this, "用户名或密码错误！");
-            return;
+            if (ans.size() == 0) {
+                JOptionPane.showMessageDialog(this, "你尚未被系统录入");
+                return;
+            } else {
+                JOptionPane.showMessageDialog(this, "用户名或密码错误！");
+                return;
+            }
+        } else if (i == 2) {
+            JOptionPane.showMessageDialog(this, "欢迎" + adminTmp.getname());
+            this.dispose();
+            MainFrame operator = new MainFrame();
+            operator.setVisible(true);
+        } else if (i == 1) {
+            JOptionPane.showMessageDialog(this, "欢迎" + ans.get(0).getname());
+            this.dispose();
+            studentFrame operator = new studentFrame(ans.get(0));
+        } else {
+            JOptionPane.showMessageDialog(this, "同学请先注册！");
         }
-        JOptionPane.showMessageDialog(this, "欢迎" + adminTmp.getname());
-        this.dispose();
-        MainFrame operator = new MainFrame();
-        operator.setVisible(true);
     }
 
     protected void resetValue(ActionEvent ae) {
