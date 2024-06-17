@@ -1,12 +1,6 @@
 package com.view;
 
 import java.awt.EventQueue;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -35,11 +29,15 @@ import java.util.Map;
 import java.util.Vector;
 
 public class studentFrame extends JFrame {
+    private student curstudent;
     private JTable staffListTable;
     private JScrollPane jscrollpane;
     private JTextField searchField;
     private JButton searchButton;
-    private studentSerive dao = new studentSerivelmpl();
+    private JComboBox<String> comboBox = new JComboBox<>();
+    private JComboBox<String> semester = new JComboBox<>();
+    public lessonSerive serive = new lessonSerivelmpl();
+    public studentSerive studentSerive = new studentSerivelmpl();
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -56,11 +54,11 @@ public class studentFrame extends JFrame {
 
     public studentFrame(student student) {
         initComponents();
+        curstudent = student;
         DefaultTableModel model = (DefaultTableModel) staffListTable.getModel();
         model.setRowCount(0);
         int i = 0;
         List<lesson> lessons = student.getLessons();
-        String[] header = { "学年", "学期", "课程代码", "课程名称", "学分", "成绩", "绩点", "学号", "姓名" };
         for (lesson cur : lessons) {
             Vector v = new Vector<>();
             v.add(cur.getyear());
@@ -75,6 +73,7 @@ public class studentFrame extends JFrame {
             v.add(student.getname());
             model.addRow(v);
         }
+
     }
 
     private void initComponents() {
@@ -100,7 +99,65 @@ public class studentFrame extends JFrame {
         });
 
         StuInfo();
+        setyear();
+        setsemester();
 
+        comboBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                selectsemesteAndyear(ie);
+            }
+        });
+
+        semester.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                selectsemesteAndyear(ie);
+            }
+        });
+    }
+
+    public void selectsemesteAndyear(ItemEvent me) {
+        if (me.getStateChange() == ItemEvent.SELECTED) {
+            int a = Integer.parseInt(semester.getSelectedItem().toString());
+            String b = comboBox.getSelectedItem().toString();
+            DefaultTableModel model = (DefaultTableModel) staffListTable.getModel();
+            if (b.equals("全部")) {
+                model.setRowCount(0);
+                List<lesson> lessons = curstudent.getLessons();
+                for (lesson cur : lessons) {
+                    Vector v = new Vector<>();
+                    v.add(cur.getyear());
+                    v.add(cur.getsemester());
+                    v.add(cur.getid());
+                    v.add(cur.getname());
+                    v.add(cur.getcredit());
+                    int point = cur.getscore() >= 60 ? ((cur.getscore() / 10) - 5) : 0;
+                    v.add(cur.getscore());
+                    v.add(point);
+                    v.add(curstudent.getid());
+                    v.add(curstudent.getname());
+                    model.addRow(v);
+                }
+                return;
+            }
+            model.setRowCount(0);
+            List<lesson> lessons = curstudent.getLessons();
+            for (lesson cur : lessons) {
+                Vector v = new Vector<>();
+                if (cur.getsemester() == a && cur.getyear().equals(b)) {
+                    v.add(cur.getyear());
+                    v.add(cur.getsemester());
+                    v.add(cur.getid());
+                    v.add(cur.getname());
+                    v.add(cur.getcredit());
+                    int point = cur.getscore() >= 60 ? ((cur.getscore() / 10) - 5) : 0;
+                    v.add(cur.getscore());
+                    v.add(point);
+                    v.add(curstudent.getid());
+                    v.add(curstudent.getname());
+                    model.addRow(v);
+                }
+            }
+        }
     }
 
     public void StuInfo() {
@@ -110,6 +167,31 @@ public class studentFrame extends JFrame {
         jscrollpane = new JScrollPane(staffListTable);
         jscrollpane.setBounds(10, 100, 800, 600);
         getContentPane().add(jscrollpane);
+    }
+
+    public void setyear() {
+        HashMap<String, Integer> map = new HashMap<>();
+        comboBox.addItem("全部");
+        List<lesson> lessons = serive.getLessons();
+        for (lesson cur : lessons) {
+            map.put(cur.getyear(), 0);
+        }
+        for (lesson cur : lessons) {
+            if (map.get(cur.getyear()) == 0) {
+                comboBox.addItem(cur.getyear());
+                map.replace(cur.getyear(), 1);
+            }
+        }
+        comboBox.setBounds(150, 50, 100, 30);
+        getContentPane().add(comboBox);
+    }
+
+    public void setsemester() {
+
+        semester.addItem("1");
+        semester.addItem("2");
+        semester.setBounds(550, 50, 100, 30);
+        getContentPane().add(semester);
     }
 
     public void searchLesson(ActionEvent ae) {
