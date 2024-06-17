@@ -3,11 +3,8 @@ package com.bean;
 import java.util.ArrayList;
 import java.util.List;
 
-public class student {
+public class student extends base{
     private List<lesson> lesson = new ArrayList<>();
-
-    private String name;
-    private int id;
 
     public student() {
     }

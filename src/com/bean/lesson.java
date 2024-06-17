@@ -1,11 +1,9 @@
 package com.bean;
 
-public class lesson {
+public class lesson extends base {
 
     private String year;
     private int semester = 0;
-    private int id;
-    private String name;
     private int credit;
     private int score = 0;
 
