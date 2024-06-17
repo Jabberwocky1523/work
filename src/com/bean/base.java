@@ -8,4 +8,8 @@ public abstract class base {
     public abstract int getid();
 
     public abstract String getname();
+
+    public abstract void setid(int id);
+
+    public abstract void setname(String name);
 }

@@ -11,11 +11,16 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
-import javax.swing.JMenu;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 import com.bean.lesson;
 import com.bean.student;
+import com.bean.base;
 import com.service.lessonSerive;
 import com.service.lessonSerivelmpl;
 import com.service.studentSerive;
@@ -33,6 +38,8 @@ import java.util.Vector;
  */
 public class MainFrame extends JFrame {
     private JMenu lessonMJMenu;
+    private JMenu FileMenu;
+    private JMenu inputMenu;
     public lessonSerive serive = new lessonSerivelmpl();
     public studentSerive studentSerive = new studentSerivelmpl();
     private List<lesson> curLessons = serive.getLessons();
@@ -101,14 +108,32 @@ public class MainFrame extends JFrame {
             temp2++;
         }
 
-        lessonMJMenu = new JMenu("课程管理");
+        FileMenu = new JMenu("导出");
+        inputMenu = new JMenu("导入");
         Font t = new Font("宋体", Font.PLAIN, 15);
+        FileMenu.setFont(t);
+        inputMenu.setFont(t);
+        lessonMJMenu = new JMenu("课程管理");
         lessonMJMenu.setFont(t);
         JMenu stumenu = new JMenu("学生申请");
         stumenu.setFont(t);
         MenuBar.add(lessonMJMenu);
         MenuBar.add(stumenu);
+        MenuBar.add(FileMenu);
+        MenuBar.add(inputMenu);
         this.setJMenuBar(MenuBar);
+
+        FileMenu.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                dealExportbtn();
+            }
+        });
+
+        inputMenu.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                importact();
+            }
+        });
 
         MainFrame curFrame = this;
         lessonMJMenu.addMouseListener(new MouseAdapter() {
@@ -197,7 +222,7 @@ public class MainFrame extends JFrame {
     }
 
     public void searchStudent(ActionEvent ae) {
-        student cur = new student();
+        base cur = new student();
         if (searchField.getText().matches("^[0-9]*$")) {
             cur.setid(Integer.parseInt(searchField.getText().toString()));
         }
@@ -528,5 +553,93 @@ public class MainFrame extends JFrame {
                 Tmodel.addRow(v);
             }
         }
+    }
+
+    public void importact() {
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            fileChooser.showSaveDialog(this);// 显示保存对话框
+            String fi = fileChooser.getSelectedFile().getAbsolutePath();
+            System.out.println(fi);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fi), "GBK"));
+            List<student> curstu = new ArrayList<>();
+            String cur;
+            int i = 0;
+            while ((cur = reader.readLine()) != null) {
+                String[] a = cur.split("\\s+");
+                if (i == 0) {
+                    i++;
+                    continue;
+                } else {
+                    int id = Integer.parseInt(a[0]);
+                    String name = a[1];
+                    int index = 2;
+                    List<lesson> curList = serive.getLessons();
+                    while (index < a.length) {
+                        curList.get(index - 2).setscore(Integer.parseInt(a[index]));
+                        index++;
+                    }
+                    student b = new student(id, name, curList);
+                    curstu.add(b);
+                }
+            }
+            DefaultTableModel model = (DefaultTableModel) staffListTable.getModel();
+            model.setRowCount(0);
+            for (student stu : curstu) {
+                int d = 0;
+                Vector v = new Vector<>();
+                v.add(stu.getid());
+                v.add(stu.getname());
+                for (lesson curLesson : stu.getLessons()) {
+                    if (curLesson.getname().equals(curLessons.get(d).getname())) {
+                        v.add(curLesson.getscore());
+                        d++;
+                        if (d == curLessons.size()) {
+                            break;
+                        }
+                    }
+                }
+                model.addRow(v);
+            }
+            reader.close();
+            JOptionPane.showMessageDialog(null, "文件上传成功");
+            if (JOptionPane.showConfirmDialog(this, "您要刷新数据库吗？") == JOptionPane.OK_OPTION) {
+                studentSerive.update(curstu);
+            }
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+
+    protected void dealExportbtn() {
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            fileChooser.showSaveDialog(this);// 显示保存对话框
+            String fi = fileChooser.getSelectedFile().getAbsolutePath() + ".xls";
+            System.out.println(fi);
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fi, true), "GBK"));
+            for (int i = 0; i < staffListTable.getColumnCount(); i++) {
+                writer.write(staffListTable.getColumnName(i) + "\t");
+            }
+            writer.write("\n");
+            for (int i = 0; i < staffListTable.getRowCount(); i++) {
+                for (int j = 0; j < staffListTable.getColumnCount(); j++) {
+                    try {
+                        writer.write(staffListTable.getValueAt(i, j).toString() + "\t");
+                    } catch (NullPointerException e) {
+                        writer.write("" + "\t");
+                        e.printStackTrace();
+                    }
+                }
+                writer.write("\n");
+            }
+            writer.close();
+            JOptionPane.showMessageDialog(null, "文件导出成功");
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+
     }
 }

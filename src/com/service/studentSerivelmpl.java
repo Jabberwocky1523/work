@@ -16,7 +16,7 @@ public class studentSerivelmpl implements studentSerive {
         return serive.findByid(id);
     }
 
-    public List<student> findByName(String name){
+    public List<student> findByName(String name) {
         return serive.findByname(name);
     }
 
@@ -28,7 +28,11 @@ public class studentSerivelmpl implements studentSerive {
         return serive.deletestudent(student);
     }
 
-    public int updateStudent(student student,student nstudent) {
-        return serive.updateStudent(student,nstudent);
+    public int updateStudent(student student, student nstudent) {
+        return serive.updateStudent(student, nstudent);
+    }
+
+    public int update(List<student> students) {
+        return serive.update(students);
     }
 }

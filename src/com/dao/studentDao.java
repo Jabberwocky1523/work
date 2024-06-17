@@ -163,6 +163,21 @@ public class studentDao extends lessonDao {
         return temp;
     }
 
+    public int update(List<student> students) {
+        int temp = 0;
+        for (student curstu : students) {
+            List<student> list = findByid(curstu.getid());
+            if (list.size() == 0) {
+                addstudent(curstu);
+                temp = 1;
+            } else {
+                updateStudent(curstu, curstu);
+                temp = 1;
+            }
+        }
+        return temp;
+    }
+
     public int addColoumn(lesson lesson) {
         int temp = 0;
         String sql = "alter table student add " + lesson.getname() + " int default 0";
