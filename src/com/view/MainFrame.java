@@ -135,6 +135,12 @@ public class MainFrame extends JFrame {
             }
         });
 
+        stumenu.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                new applyFrame();
+            }
+        });
+
         MainFrame curFrame = this;
         lessonMJMenu.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {
@@ -616,10 +622,15 @@ public class MainFrame extends JFrame {
         try {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fileChooser.showSaveDialog(this);// 显示保存对话框
-            String fi = fileChooser.getSelectedFile().getAbsolutePath() + ".xls";
+            fileChooser.showSaveDialog(this);
+            StringBuffer fi = new StringBuffer(fileChooser.getSelectedFile().getAbsolutePath());
+            int result = fi.toString().indexOf(".xls");
+            if (result == -1) {
+                fi.append(".xls");
+            }
             System.out.println(fi);
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fi, true), "GBK"));
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(fi.toString(), true), "GBK"));
             for (int i = 0; i < staffListTable.getColumnCount(); i++) {
                 writer.write(staffListTable.getColumnName(i) + "\t");
             }

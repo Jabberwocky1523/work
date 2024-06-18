@@ -87,7 +87,7 @@ public class LoginFrm extends JFrame {
         passwordTextField.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    loginkey();
+                    loginAct();
                 }
             }
         });
@@ -135,7 +135,7 @@ public class LoginFrm extends JFrame {
         codeLabel.setBounds(500, 300, 60, 60);
         codeLabel.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {
-                loginkey();
+                loginAct();
             }
 
             public void mouseEntered(MouseEvent e) {
@@ -170,13 +170,13 @@ public class LoginFrm extends JFrame {
         getContentPane().add(submitButton);
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                loginAct(ae);
+                loginAct();
             }
         });
 
     }
 
-    protected void loginkey() {
+    protected void loginAct() {
         String aname = anameTextField.getText().toString();
         String password = passwordTextField.getText().toString();
         if (StringUtil.isEmpty(aname)) {
@@ -191,33 +191,9 @@ public class LoginFrm extends JFrame {
         adminTmp.setname(aname);
         adminTmp.setpwd(password);
         int i = serive.login(adminTmp);
+        List<student> ans = new ArrayList<>();
         if (i == 0) {
-            JOptionPane.showMessageDialog(this, "用户名或密码错误！");
-            return;
-        }
-        JOptionPane.showMessageDialog(this, "欢迎" + adminTmp.getname());
-        this.dispose();
-        MainFrame operator = new MainFrame();
-        operator.setVisible(true);
-    }
-
-    protected void loginAct(ActionEvent ae) {
-        String aname = anameTextField.getText().toString();
-        String password = passwordTextField.getText().toString();
-        if (StringUtil.isEmpty(aname)) {
-            JOptionPane.showMessageDialog(this, "用户名不能为空！");
-            return;
-        }
-        if (StringUtil.isEmpty(password)) {
-            JOptionPane.showMessageDialog(this, "密码不能为空！");
-            return;
-        }
-        admin adminTmp = new admin();
-        adminTmp.setname(aname);
-        adminTmp.setpwd(password);
-        int i = serive.login(adminTmp);
-        List<student> ans = Dao.findByid(Integer.parseInt(aname));
-        if (i == 0) {
+            ans = Dao.findByid(Integer.parseInt(aname));
             if (ans.size() == 0) {
                 JOptionPane.showMessageDialog(this, "你尚未被系统录入");
                 return;
@@ -231,6 +207,7 @@ public class LoginFrm extends JFrame {
             MainFrame operator = new MainFrame();
             operator.setVisible(true);
         } else if (i == 1) {
+            ans = Dao.findByid(Integer.parseInt(aname));
             JOptionPane.showMessageDialog(this, "欢迎" + ans.get(0).getname());
             this.dispose();
             studentFrame operator = new studentFrame(ans.get(0));
