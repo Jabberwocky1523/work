@@ -33,17 +33,17 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
     Node<K, V>[] table = null;
     int size;
     float DEFAULT_LOAD_FACTOR = 0.75f;
-    int DEFAULT_INITIAL_CAPACITY = 1 << 4;
+    int DEFAULT_INITIAL_LENGTH = 1 << 4;
 
     @Override
     public V put(K key, V value) {
         if (table == null) {
-            table = new Node[DEFAULT_INITIAL_CAPACITY];
+            table = new Node[DEFAULT_INITIAL_LENGTH];
         }
-        if (size > (DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY)) {
+        if (size > (DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_LENGTH)) {
             resize();
         }
-        int index = getIndex(key, DEFAULT_INITIAL_CAPACITY);
+        int index = getIndex(key, DEFAULT_INITIAL_LENGTH);
         Node<K, V> node = table[index];
 
         if (node == null) {
@@ -74,7 +74,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
     @Override
     public V get(K k) {
-        Node<K, V> node = getNode(table[getIndex(k, DEFAULT_INITIAL_CAPACITY)], k);
+        Node<K, V> node = getNode(table[getIndex(k, DEFAULT_INITIAL_LENGTH)], k);
         return node == null ? null : node.value;
     }
 
@@ -90,14 +90,14 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
     @Override
     public int remove(K k) {
-        Node CUR = table[getIndex(k, DEFAULT_INITIAL_CAPACITY)];
+        Node CUR = table[getIndex(k, DEFAULT_INITIAL_LENGTH)];
         Node<K, V> node = getNode(CUR, k);
         if (node == null) {
             return 0;
         } else {
             Node<K, V> curnode = CUR;
             if (curnode.key.equals(k)) {
-                table[getIndex(k, DEFAULT_INITIAL_CAPACITY)] = curnode.next;
+                table[getIndex(k, DEFAULT_INITIAL_LENGTH)] = curnode.next;
                 return 1;
             }
             while (!curnode.next.key.equals(k)) {
@@ -114,7 +114,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
     }
 
     private void resize() {
-        Node<K, V>[] newTable = new Node[DEFAULT_INITIAL_CAPACITY << 1];
+        Node<K, V>[] newTable = new Node[DEFAULT_INITIAL_LENGTH << 1];
         for (int i = 0; i < table.length; i++) {
             Node<K, V> oldNode = table[i];
             while (oldNode != null) {
@@ -128,7 +128,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             }
         }
         table = newTable;
-        DEFAULT_INITIAL_CAPACITY = newTable.length;
+        DEFAULT_INITIAL_LENGTH = newTable.length;
         newTable = null;
     }
 
