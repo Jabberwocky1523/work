@@ -120,6 +120,10 @@ public class lessonDao {
             if (a != 0) {
                 temp = 1;
             }
+            sql = "DELETE from apply where lesson = ?";
+            prst = con.prepareStatement(sql);
+            prst.setString(1, lesson.getname());
+            temp = prst.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
