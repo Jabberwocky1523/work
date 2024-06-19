@@ -320,12 +320,12 @@ public class LessonFrame extends JFrame {
         if (a != 0) {
             JOptionPane.showMessageDialog(this, "添加成功!");
             setlesson(cur);
+            MainFrame.getContentPane().removeAll();
+            MainFrame.repaint();
+            MainFrame.initComponents();
         } else {
             JOptionPane.showMessageDialog(this, "添加失败!");
         }
-        MainFrame.getContentPane().removeAll();
-        MainFrame.repaint();
-        MainFrame.initComponents();
         resetValue(ae);
     }
 

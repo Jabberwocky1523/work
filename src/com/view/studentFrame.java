@@ -14,9 +14,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 
+import com.bean.admin;
 import com.bean.apply;
+import com.bean.base;
 import com.bean.lesson;
 import com.bean.student;
+import com.service.adminSerive;
+import com.service.adminSerivelmpl;
 import com.service.applySerive;
 import com.service.applySerivelmpl;
 import com.service.lessonSerive;
@@ -45,6 +49,7 @@ public class studentFrame extends JFrame {
     public lessonSerive serive = new lessonSerivelmpl();
     public studentSerive studentSerive = new studentSerivelmpl();
     public applySerive applySerive = new applySerivelmpl();
+    public static adminSerive adminSerive = new adminSerivelmpl();
     public JMenu applyMenu;
     JButton applyButton = new JButton("申请");
     JButton deleteButton = new JButton("撤销");
@@ -140,6 +145,7 @@ public class studentFrame extends JFrame {
             v.add(point);
             v.add(curstudent.getid());
             v.add(curstudent.getname());
+            lesson.map.put(cur.getid(), cur);
             model.addRow(v);
         }
         setyear();
@@ -242,6 +248,33 @@ public class studentFrame extends JFrame {
     }
 
     public void searchLesson(ActionEvent ae) {
+        base cur = new lesson();
+        if (searchField.getText().toString().matches("^[0-9]*$") &&
+                !searchField.getText().toString().equals("")) {
+            cur.setid(Integer.parseInt(searchField.getText().toString()));
+        }
+        lesson curLesson = lesson.map.get(cur.getid());
+        cur.setname(searchField.getText().toString());
+        DefaultTableModel model = (DefaultTableModel) staffListTable.getModel();
+        model.setRowCount(0);
+        List<lesson> lessons = serive.findByName(cur.getname());
+        if (lessons.size() == 0) {
+            lessons.add(curLesson);
+        }
+        for (lesson CUR : lessons) {
+            Vector v = new Vector<>();
+            v.add(CUR.getyear());
+            v.add(CUR.getsemester());
+            v.add(CUR.getid());
+            v.add(CUR.getname());
+            v.add(CUR.getcredit());
+            v.add(CUR.getscore());
+            int point = CUR.getscore() >= 60 ? ((CUR.getscore() / 10) - 5) : 0;
+            v.add(point);
+            v.add(curstudent.getid());
+            v.add(curstudent.getname());
+            model.addRow(v);
+        }
 
     }
 

@@ -53,8 +53,8 @@ public class MainFrame extends JFrame {
     private int Xindex2 = 950;
     private student student1 = new student();
     private JMenuBar MenuBar = new JMenuBar();
-    private JTextField[] co = new JTextField[serive.getLessons().size()];
-    private JLabel[] coLabels = new JLabel[serive.getLessons().size()];
+    private JTextField[] co;
+    private JLabel[] coLabels;
     private JPanel dialogPane;
     private JPanel contentPanel;
     private JPanel buttonBar;
@@ -99,19 +99,6 @@ public class MainFrame extends JFrame {
         Xindex1 = 860;
         Xindex2 = 950;
         student1 = new student();
-        MenuBar = new JMenuBar();
-        JTextField[] co = new JTextField[serive.getLessons().size()];
-        JLabel[] coLabels = new JLabel[serive.getLessons().size()];
-        if (temp2 == 0) {
-            setTitle("高校成绩管理系统");
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 关闭窗口
-            setBounds(200, 20, 1200, 700);// 设置页面大小
-            setResizable(false);// 设置页面不可拖拽改变大小
-            getContentPane().setLayout(null);
-            setVisible(true);
-            temp2++;
-        }
-
         FileMenu = new JMenu("导出");
         inputMenu = new JMenu("导入");
         Font t = new Font("宋体", Font.PLAIN, 15);
@@ -121,10 +108,20 @@ public class MainFrame extends JFrame {
         lessonMJMenu.setFont(t);
         JMenu stumenu = new JMenu("学生申请");
         stumenu.setFont(t);
-        MenuBar.add(lessonMJMenu);
-        MenuBar.add(stumenu);
-        MenuBar.add(FileMenu);
-        MenuBar.add(inputMenu);
+        if (temp2 == 0) {
+            setTitle("高校成绩管理系统");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 关闭窗口
+            setBounds(200, 20, 1200, 700);// 设置页面大小
+            setResizable(false);// 设置页面不可拖拽改变大小
+            getContentPane().setLayout(null);
+            setVisible(true);
+            MenuBar = new JMenuBar();
+            MenuBar.add(lessonMJMenu);
+            MenuBar.add(stumenu);
+            MenuBar.add(FileMenu);
+            MenuBar.add(inputMenu);
+            temp2++;
+        }
         this.setJMenuBar(MenuBar);
 
         FileMenu.addMouseListener(new MouseAdapter() {
@@ -288,6 +285,8 @@ public class MainFrame extends JFrame {
         getContentPane().add(nameTextField);
 
         for (lesson cur : curLessons) {
+            co = new JTextField[curLessons.size()];
+            coLabels = new JLabel[curLessons.size()];
             stuLabel = new JLabel(cur.getname());
             stuTextField = new JTextField();
             stuLabel.setBounds(Xindex1, 50 + index, 100, 30);

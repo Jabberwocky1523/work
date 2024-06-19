@@ -1,7 +1,11 @@
 package com.bean;
 
+import com.MyHashMap.MyHashMap;
+import com.MyHashMap.MyMap;
+
 public class lesson extends base {
 
+    public static MyMap<Integer, lesson> map = new MyHashMap<>();
     private String year;
     private int semester = 0;
     private int credit;

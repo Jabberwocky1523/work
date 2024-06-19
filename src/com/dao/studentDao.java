@@ -23,6 +23,7 @@ public class studentDao extends lessonDao {
                 String name = executeQuery.getString("name");
                 for (lesson lesson : lessons) {
                     lesson.setscore(executeQuery.getInt(lesson.getname()));
+                    lesson.map.put(lesson.getid(), lesson);
                 }
                 student temp = new student(id, name, lessons);
                 ans.add(temp);
