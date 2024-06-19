@@ -147,11 +147,21 @@ public class RegisterFrame extends JFrame {
             return;
         }
         admin cur = adminserive.getAdminByname(id);
-        if (cur.gettemp() == 0 || cur.getname() == null) {
+        if (cur.getname() == null) {
             JOptionPane.showMessageDialog(this, "你不是我们学校学生，暂不允许注册");
             return;
-        } else if (cur.gettemp() == 1) {
-
+        } else if (cur.gettemp() == 1 || cur.gettemp() == 2) {
+            JOptionPane.showMessageDialog(this, "你已经注册过了！");
+        } else {
+            cur.setpwd(pwd);
+            int a = adminserive.updateAdmin(cur);
+            if (a != 0) {
+                JOptionPane.showMessageDialog(this, "注册成功！");
+                return;
+            } else {
+                JOptionPane.showMessageDialog(this, "注册失败！");
+                return;
+            }
         }
     }
 }

@@ -18,15 +18,13 @@ public class studentDao extends lessonDao {
             PreparedStatement prst = con.prepareStatement(sql);
             ResultSet executeQuery = prst.executeQuery();
             while (executeQuery.next()) {
-                student temp = new student();
                 List<lesson> lessons = getlesson();
-                temp.setid(executeQuery.getInt("id"));
-                temp.setname(executeQuery.getString("name"));
+                int id = executeQuery.getInt("id");
+                String name = executeQuery.getString("name");
                 for (lesson lesson : lessons) {
-                    lesson cur = lesson;
-                    cur.setscore(executeQuery.getInt(lesson.getname()));
-                    temp.getLessons().add(cur);
+                    lesson.setscore(executeQuery.getInt(lesson.getname()));
                 }
+                student temp = new student(id, name, lessons);
                 ans.add(temp);
             }
 
@@ -113,6 +111,7 @@ public class studentDao extends lessonDao {
                 prst = con.prepareStatement(sql);
                 a = prst.executeUpdate();
             }
+            student.map.put(student.getid(), student);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -129,6 +128,7 @@ public class studentDao extends lessonDao {
             if (a != 0) {
                 temp = 1;
             }
+            student.map.remove(student.getid());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -157,6 +157,7 @@ public class studentDao extends lessonDao {
                 prst = con.prepareStatement(sql);
                 a = prst.executeUpdate();
             }
+            student.map.put(nstudent.getid(), nstudent);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -2,8 +2,11 @@ package com.bean;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.MyHashMap.MyHashMap;
+import com.MyHashMap.MyMap;
 
-public class student extends base{
+public class student extends base {
+    public static MyMap<Integer, student> map = new MyHashMap<Integer, student>();
     private List<lesson> lesson = new ArrayList<>();
 
     public student() {
@@ -18,6 +21,7 @@ public class student extends base{
         this.id = id;
         this.name = name;
         this.lesson = lesson;
+        map.put(id, this);
     }
 
     public String getname() {
@@ -43,9 +47,9 @@ public class student extends base{
     public void setlesson(List<lesson> lessons) {
         this.lesson = lessons;
     }
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return new String(id + "" + name + lesson.toString());
     }
 }

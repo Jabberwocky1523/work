@@ -20,7 +20,10 @@ import java.io.OutputStreamWriter;
 
 import com.bean.lesson;
 import com.bean.student;
+import com.bean.admin;
 import com.bean.base;
+import com.service.adminSerive;
+import com.service.adminSerivelmpl;
 import com.service.lessonSerive;
 import com.service.lessonSerivelmpl;
 import com.service.studentSerive;
@@ -42,6 +45,7 @@ public class MainFrame extends JFrame {
     private JMenu inputMenu;
     public lessonSerive serive = new lessonSerivelmpl();
     public studentSerive studentSerive = new studentSerivelmpl();
+    public adminSerive adminSerive = new adminSerivelmpl();
     private List<lesson> curLessons = serive.getLessons();
     private int temp2 = 0;
     private int temp = 0;
@@ -229,15 +233,16 @@ public class MainFrame extends JFrame {
 
     public void searchStudent(ActionEvent ae) {
         base cur = new student();
-        if (searchField.getText().matches("^[0-9]*$")) {
+        if (searchField.getText().toString().matches("^[0-9]*$") && !searchField.getText().toString().equals("")) {
             cur.setid(Integer.parseInt(searchField.getText().toString()));
         }
+        student a = student.map.get(cur.id);
         cur.setname(searchField.getText().toString());
         DefaultTableModel model = (DefaultTableModel) staffListTable.getModel();
         model.setRowCount(0);
         List<student> students = studentSerive.findByName(cur.getname());
         if (students.size() == 0) {
-            students = studentSerive.findByid(cur.getid());
+            students.add(a);
         }
         for (student curstu : students) {
             Vector v = new Vector<>();
@@ -377,9 +382,12 @@ public class MainFrame extends JFrame {
         String name = nameTextField.getText().toString();
         List<lesson> lessons = serive.getLessons();
         student cur = new student(id, name, lessons);
+        student.map.remove(id);
         int a = studentSerive.deletestudent(cur);
+        admin curAdmin = new admin(id + "", "0");
         if (a != 0) {
             JOptionPane.showMessageDialog(this, "删除成功！");
+            adminSerive.deleteAdmin(curAdmin);
         } else {
             JOptionPane.showMessageDialog(this, "删除失败！");
         }
@@ -426,6 +434,9 @@ public class MainFrame extends JFrame {
         if (a != 0) {
             JOptionPane.showMessageDialog(this, "添加成功!");
             setstuinfo(new student());
+            admin b = new admin();
+            b.setname(id + "");
+            adminSerive.addAdmin(b);
         } else {
             JOptionPane.showMessageDialog(this, "添加失败!");
         }
@@ -591,6 +602,7 @@ public class MainFrame extends JFrame {
                 }
             }
             DefaultTableModel model = (DefaultTableModel) staffListTable.getModel();
+            List<admin> admins = new ArrayList<>();
             model.setRowCount(0);
             for (student stu : curstu) {
                 int d = 0;
@@ -606,12 +618,15 @@ public class MainFrame extends JFrame {
                         }
                     }
                 }
+                admin curadmin = new admin(stu.getid() + "", "0");
+                admins.add(curadmin);
                 model.addRow(v);
             }
             reader.close();
             JOptionPane.showMessageDialog(null, "文件上传成功");
             if (JOptionPane.showConfirmDialog(this, "您要刷新数据库吗？") == JOptionPane.OK_OPTION) {
                 studentSerive.update(curstu);
+                adminSerive.update(admins);
             }
         } catch (Exception ee) {
             ee.printStackTrace();

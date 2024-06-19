@@ -1,5 +1,7 @@
 package com.service;
 
+import java.util.List;
+
 import com.bean.admin;
 import com.dao.adminDao;
 
@@ -41,5 +43,9 @@ public class adminSerivelmpl implements adminSerive {
             temp = 1;
         }
         return temp;
+    }
+
+    public int update(List<admin> adminList) {
+        return serive.update(adminList);
     }
 }

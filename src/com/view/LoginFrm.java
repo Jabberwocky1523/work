@@ -198,7 +198,7 @@ public class LoginFrm extends JFrame {
                 JOptionPane.showMessageDialog(this, "你尚未被系统录入");
                 return;
             } else {
-                JOptionPane.showMessageDialog(this, "用户名或密码错误！");
+                JOptionPane.showMessageDialog(this, "用户名或密码错误！或者未注册");
                 return;
             }
         } else if (i == 2) {
@@ -206,13 +206,11 @@ public class LoginFrm extends JFrame {
             this.dispose();
             MainFrame operator = new MainFrame();
             operator.setVisible(true);
-        } else if (i == 1) {
+        } else {
             ans = Dao.findByid(Integer.parseInt(aname));
             JOptionPane.showMessageDialog(this, "欢迎" + ans.get(0).getname());
             this.dispose();
             studentFrame operator = new studentFrame(ans.get(0));
-        } else {
-            JOptionPane.showMessageDialog(this, "同学请先注册！");
         }
     }
 

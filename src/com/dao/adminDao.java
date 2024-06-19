@@ -1,11 +1,13 @@
 package com.dao;
 
+import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.bean.admin;
+import com.bean.student;
 import com.util.DbUtil;
 
 public class adminDao {
@@ -48,9 +50,21 @@ public class adminDao {
         return temp;
     }
 
+    public int update(List<admin> adminList) {
+        int temp = 0;
+        for (admin curadmin : adminList) {
+            admin a = getAdminByname(curadmin.getname());
+            if (a.getname() == null) {
+                addAdmin(curadmin);
+                temp = 1;
+            }
+        }
+        return temp;
+    }
+
     public int updateAdmin(admin admin) {
         int temp = 0;
-        String sql = "Update admin SET password = ? where aname = ?";
+        String sql = "Update admin SET password = ?,temp = '1' where aname = ?";
         try {
             PreparedStatement prst = con.prepareStatement(sql);
             prst.setString(1, admin.getpwd());
@@ -67,13 +81,12 @@ public class adminDao {
 
     public int addAdmin(admin admin) {
         int temp = 0;
-        String sql = "INSERT INTO admin (aname,password,temp) VALUES (?,?,'0')";
+        String sql = "INSERT INTO admin (aname,password,temp) VALUES (?,'0','0')";
         try {
             admin b = getAdminByname(admin.getname());
             if (b.getname() == null && b.getpwd() == null) {
                 PreparedStatement prst = con.prepareStatement(sql);
                 prst.setString(1, admin.getname());
-                prst.setString(2, admin.getpwd());
                 int a = prst.executeUpdate();
                 if (a != 0) {
                     temp = 1;
