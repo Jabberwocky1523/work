@@ -125,10 +125,10 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
                 oldNode.next = newTable[index];
                 newTable[index] = oldNode;
                 oldNode = oldNext;
-
             }
         }
         table = newTable;
+        DEFAULT_INITIAL_CAPACITY = newTable.length;
         newTable = null;
     }
 
